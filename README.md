@@ -1,7 +1,7 @@
 phpdbhelper
 ===========
 
-phpdbhelper is a simple php multidriver database halper class
+phpdbhelper is a simple php multidriver database helper class
 
 ###How To use
   first set up your database configuration in config.php
