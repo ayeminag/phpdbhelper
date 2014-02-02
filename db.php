@@ -4,10 +4,11 @@ class DB
 {
 	private $conn;
 	private $queryString;
+	private static $instance;
 	private $query;
 	private $result;
 
-	function __construct($config)
+	private function __construct($config)
 	{
 		$connection_string = $config['driver'];
 		$connection_string .= ':host='.$config['host'].';';
@@ -20,6 +21,16 @@ class DB
 		{
 			echo 'ERRORS: '. $e->getMessage();
 		}
+	}
+
+	public function getInstance($config)
+	{
+		if(!isset(self::$instance))
+		{
+			$classname = __CLASS__;
+			self::$instance = new $classname($config);
+		}
+		return self::$instance;
 	}
 
 	public function insert($tablename, $data = array())
