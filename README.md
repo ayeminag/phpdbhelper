@@ -11,12 +11,12 @@ phpdbhelper is a simple php multidriver database helper class
          include 'config.php';
          include 'db.php';
 
-  then create a DB object passing `$config` as the parameter
+  then create a DB object by calling  `DB::getInstance()` method and  passing `$config` as the parameter
 
     <?php
          include 'config.php';
          include 'db.php';
          
-         $db = new DB($config);
+         $db = DB::getInstance($config);
 
   after that u can use all insert, retrieve, update, delete method. Check the source codes for more details.
