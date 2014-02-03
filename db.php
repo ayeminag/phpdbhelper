@@ -23,7 +23,7 @@ class DB
 		}
 	}
 
-	public function getInstance($config)
+	public static function getInstance($config)
 	{
 		if(!isset(self::$instance))
 		{
