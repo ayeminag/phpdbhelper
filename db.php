@@ -72,11 +72,11 @@ class DB
 		$this->prepare($this->queryString);
 		$this->execute();
 		$results = [];
-		while($res = $this->query->fetch())
+		while($row = $this->query->fetch())
 		{
-			$results[] = $res;
+			$results[] = $row; 
 		}
-		return $results;
+		return (count($results) == 1) ? $results[0] : $results;
 	}
 
 	private function getColumnNames($table)
@@ -120,7 +120,12 @@ class DB
 		}
 		$this->prepare($this->queryString);
 		$this->execute($this->premsPrepare($pointer));
-		return $this->query->fetch();
+		$results = [];
+		while($row = $this->query->fetch())
+		{
+			$results[] = $row; 
+		}
+		return (count($results) == 1) ? $results[0] : $results;
 	}
 
 	public function update($tablename, $data = array(), $id)
