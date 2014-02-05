@@ -66,6 +66,30 @@ class DB
 		return $this->execute($this->premsPrepare($data));
 	}
 
+	public function getAll($table)
+	{
+		$this->queryString = "SELECT * FROM `$table`";
+		$this->prepare($this->queryString);
+		$this->execute();
+		$results = [];
+		while($res = $this->query->fetch())
+		{
+			$results[] = $res;
+		}
+		return $results;
+	}
+
+	private function getColumnNames($table)
+	{
+		$this->queryString = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = :table";
+		$this->prepare($this->queryString);
+		$this->execute([":table" => $table]);
+		while($row = $this->query->fetch(PDO::FETCH_ASSOC))
+		{
+			$columns[] = $row['COLUMN_NAME'];
+		}
+		return $columns;
+	}
 	public function retrieve($table, $pointer = array())
 	{
 		$this->queryString = "SELECT * FROM `$table` WHERE ";
@@ -158,7 +182,7 @@ class DB
 		}
 		return $prems;
 	}
-	private function execute($prams)
+	private function execute($prams = null)
 	{
 		return $this->query->execute($prams);
 	}
