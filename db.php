@@ -13,20 +13,18 @@ class DB
 		$connection_string = $config['driver'];
 		$connection_string .= ':host='.$config['host'].';';
 		$connection_string .= 'dbname='.$config['dbname'].';';
-		try{
+		try {
 			$this->conn = new PDO($connection_string, $config['username'], $config['password']);
 			$this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			$this->conn->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
-		}catch(PDOException $e)
-		{
+		} catch(PDOException $e) {
 			echo 'ERRORS: '. $e->getMessage();
 		}
 	}
 
 	public static function getInstance($config)
 	{
-		if(!isset(self::$instance))
-		{
+		if (!isset(self::$instance)) {
 			$classname = __CLASS__;
 			self::$instance = new $classname($config);
 		}
@@ -37,30 +35,22 @@ class DB
 	{
 		$this->queryString = "INSERT INTO `".$tablename."`(";
 		$columns = array_keys($data);
-		for($i = 0; $i < count($columns); $i++)
-		{
-			if($i == (count($columns) - 1))
-			{
+		for ($i = 0; $i < count($columns); $i++) {
+			if ($i == (count($columns) - 1)) {
 				$this->queryString .= "`".$columns[$i].'`';
-			}
-			else
-			{
+			} else {
 				$this->queryString .= "`".$columns[$i].'`, ';
 			}
 		}
+		
 		$this->queryString .= ") VALUES(";
 		$values = array_values($data);
-		for($i = 0; $i < count($values); $i++)
-		{
-			if($i == (count($values) - 1))
-			{
+		for ($i = 0; $i < count($values); $i++) {
+			if($i == (count($values) - 1)) {
 				$this->queryString .= ":".$columns[$i].")";
-			}
-			else
-			{
+			} else {
 				$this->queryString .= ":".$columns[$i].", ";
 			}
-			
 		}
 		$this->prepare($this->queryString);
 		return $this->execute($this->premsPrepare($data));
@@ -72,8 +62,7 @@ class DB
 		$this->prepare($this->queryString);
 		$this->execute();
 		$results = [];
-		while($row = $this->query->fetch())
-		{
+		while ($row = $this->query->fetch()) {
 			$results[] = $row; 
 		}
 		return (count($results) == 1) ? $results[0] : $results;
@@ -84,8 +73,7 @@ class DB
 		$this->queryString = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = :table";
 		$this->prepare($this->queryString);
 		$this->execute([":table" => $table]);
-		while($row = $this->query->fetch(PDO::FETCH_ASSOC))
-		{
+		while ($row = $this->query->fetch(PDO::FETCH_ASSOC)) {
 			$columns[] = $row['COLUMN_NAME'];
 		}
 		return $columns;
@@ -95,24 +83,16 @@ class DB
 		$this->queryString = "SELECT * FROM `$table` WHERE ";
 		$keys = array_keys($pointer);
 		$values = array_values($pointer);
-		if(count($pointer) == 1)
-		{
-			foreach($pointer as $key => $value)
-			{
+		if (count($pointer) == 1) {
+			foreach ($pointer as $key => $value) {
 				$this->queryString .= "`$key`=:$key";
 			}
-		}
-		else if(count($pointer) > 0)
-		{
+		} else if(count($pointer) > 0) {
 			$i = 0;
-			foreach ($pointer as $key => $value) 
-			{
-				if($i == (count($pointer) - 1))
-				{
+			foreach ($pointer as $key => $value) {
+				if ($i == (count($pointer) - 1)) {
 					$this->queryString .= "`$key`=:$key";
-				}
-				else
-				{
+				} else {
 					$this->queryString .= "`$key`=:$key ". "AND" ." ";
 				}	
 				$i++;
@@ -121,8 +101,7 @@ class DB
 		$this->prepare($this->queryString);
 		$this->execute($this->premsPrepare($pointer));
 		$results = [];
-		while($row = $this->query->fetch())
-		{
+		while ($row = $this->query->fetch()) {
 			$results[] = $row; 
 		}
 		return (count($results) == 1) ? $results[0] : $results;
@@ -134,14 +113,10 @@ class DB
 		$i = 0;
 		$keys = array_keys($data);
 		$values = array_values($data);
-		foreach($keys as $key)
-		{
-			if($i == (count($data) - 1))
-			{
+		foreach ($keys as $key) {
+			if ($i == (count($data) - 1)) {
 				$this->queryString .= "`$key`=:$key ";
-			}
-			else
-			{
+			} else {
 				$this->queryString .= "`$key`=:$key, ";
 			}
 			$i++;
@@ -157,14 +132,10 @@ class DB
 		$i = 0;
 		$keys = array_keys($pointer);
 		$values = array_values($pointer);
-		foreach($pointer as $key => $value)
-		{
-			if($i == (count($pointer) - 1))
-			{
+		foreach ($pointer as $key => $value) {
+			if ($i == (count($pointer) - 1)) {
 				$this->queryString .= "`$key`=:$key";
-			}
-			else
-			{
+			} else {
 				$this->queryString .= "`$key`=:$key ". "AND" ." ";
 			}
 			$i++;
@@ -181,8 +152,7 @@ class DB
 	private function premsPrepare($data = array())
 	{
 		$prems = array();
-		foreach($data as $key => $value)
-		{
+		foreach ($data as $key => $value) {
 			$prems[":$key"] = $value;
 		}
 		return $prems;
